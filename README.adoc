@@ -1,0 +1,84 @@
+= Activate-Web
+
+image:https://img.shields.io/npm/v/activate-web?style=flat-square[npm]
+
+The "Activate Windows" watermark ported to *Open Web ™*.
+Inspired by https://github.com/MrGlockenspiel/activate-linux[activate-linux].
+
+It comes with a vanilla JS/TS and a React version. `tsconfig.json` target & module set to ES2020.
+
+WARNING: This is a parody and not meant to be used anywhere close to production.
+
+Demo at https://activate-web-demo.netlify.app.
+
+== Usage
+
+=== Vanilla JS with ES module
+
+[source,html]
+----
+<body>
+	<!-- other important things ->
+	<script type="module">
+		import Activate from 'https://esm.run/activate-web'
+		activate = new Activate({
+			name: 'The Open Web',
+			gotoName: 'Donate',
+			gotoLink: 'https://opencollective.com/theopenweb' // This is an example
+		})
+		activate.activate()
+	</script>
+</body>
+----
+
+=== Vanilla JS/TS
+
+----
+$ npm install --save activate-web
+----
+
+[source,js]
+----
+import Activate from 'activate-web'
+
+const activate = new Activate({
+	name: 'The Open Web',
+	gotoName: 'Donate',
+	gotoLink: 'https://opencollective.com/theopenweb' // This is an example
+})
+
+activate.activate()
+----
+
+=== React
+
+----
+$ npm install activate-web
+----
+
+[source,jsx]
+----
+import Activate from 'activate-web/react'
+
+export default App() {
+	return (
+		// other important things
+		<Activate name='The Open Web' gotoName='Donate' gotoLink: 'https://opencollective.com/theopenweb' />
+	)
+}
+----
+
+== Configuration
+
+.`import { ActivateOptions } from 'activate-web'`
+- `name?: string` The name in `Activate ${name}`
+- `gotoName?: string` The name in `Go to ${gotoName} to activate...`
+- `gotoLink?: string` Link for `gotoName`
+- `detailHtml?: string | ReactElement` Custom HTML or element to put in detail;
+only `ReactElement` is allowed in React, no raw HTML
+- `textColor?: string` Custom text color
+- `noDefaultStyle?: boolean` Don't use default style
+
+== License
+
+BSD 3-clause &copy; 2022 Blair Noctis.

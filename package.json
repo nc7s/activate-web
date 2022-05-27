@@ -1,7 +1,8 @@
 {
 	"name": "activate-web",
 	"description": "Like activate-linux, but for websites",
-	"version": "0.0.1",
+	"version": "0.0.2",
+	"repository": "https://github.com/bnoctis/activate-web",
 	"author": "Blair Noctis <code@noctis.im>",
 	"main": "lib.js",
 	"scripts": {

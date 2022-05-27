@@ -13,6 +13,11 @@ Demo at https://activate-web-demo.netlify.app.
 
 == Usage
 
+.`import Activate, { ActivateOptions } from 'activate-web'`
+- `new Activate(options?: ActivateOptions)` See below for available options
+- `activate.activate()` Activate and attach the watermark
+- `activate.deactivate()` Deactivate and detach the watermark
+
 === Vanilla JS with ES module
 
 [source,html]
@@ -71,12 +76,12 @@ export default App() {
 == Configuration
 
 .`import { ActivateOptions } from 'activate-web'`
-- `name?: string` The name in `Activate ${name}`
-- `gotoName?: string` The name in `Go to ${gotoName} to activate...`
+- `name: string` Name in title: `Activate ${name}`
+- `gotoName: string` Name of go-to in detail: `Go to ${gotoName} to activate...`
 - `gotoLink?: string` Link for `gotoName`
 - `detailHtml?: string | ReactElement` Custom HTML or element to put in detail;
-only `ReactElement` is allowed in React, no raw HTML
-- `textColor?: string` Custom text color
+only `ReactElement` is allowed in React, otherwise it's escaped
+- `textColor?: string` Custom text color; default style is `
 - `noDefaultStyle?: boolean` Don't use default style
 
 == License

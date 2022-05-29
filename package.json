@@ -1,7 +1,7 @@
 {
 	"name": "activate-web",
 	"description": "Windows-like watermark, but for websites",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"repository": "https://github.com/bnoctis/activate-web",
 	"author": "Blair Noctis <code@noctis.im>",
 	"main": "lib.js",

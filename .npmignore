@@ -2,3 +2,5 @@ demo/
 _demo/
 *.log
 demo.webpack.config.js
+pnpm-lock.yaml
+tsconfig.json

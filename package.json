@@ -7,8 +7,8 @@
 	"main": "lib.js",
 	"scripts": {
 		"build": "tsc",
-		"clean": "rm -r lib.js react.js _demo/",
-		"check-publish": "pnpm publish --dry-run",
+		"clean": "rm -r lib.js react.js _demo/ || true",
+		"check-publish": "pnpm clean && pnpm build && pnpm publish --dry-run --no-git-checks",
 		"demo-build": "webpack -c demo.webpack.config.js && cp ./demo/vanilla.html ./demo/style.css ./lib.js _demo/",
 		"demo-start": "webpack serve -c demo.webpack.config.js"
 	},

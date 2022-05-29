@@ -50,6 +50,8 @@ export const OPTION_KEYS = ['name', 'gotoText', 'gotoLink', 'titleHtml', 'detail
 
 const FALSY_STRINGS = ['false', 'null', 'undefined']
 
+const TAG_NAME = 'activate-web'
+
 export interface ActivateOptions {
 	name: string,
 	gotoText: string,
@@ -66,7 +68,7 @@ export const DEFAULT_OPTIONS: ActivateOptions = {
 	detailHtml: '',
 }
 
-export default class Activate extends HTMLElement {
+export default class ActivateWebElement extends HTMLElement {
 	#options: ActivateOptions = Object.create(DEFAULT_OPTIONS)
 
 	titleEl: HTMLElement
@@ -95,21 +97,6 @@ export default class Activate extends HTMLElement {
 			this.updateTitle()
 			this.updateDetail()
 		})
-	}
-
-	static activate(tagName: string = 'activate-web') {
-		if(window.customElements.get(tagName)) {
-			return
-		}
-		window.customElements.define(tagName, Activate)
-		const activateEls = document.querySelectorAll(tagName)
-		if(activateEls.length !== 0) {
-			for(let el of activateEls) {
-				if(!(el instanceof Activate)) {
-					window.customElements.upgrade(el)
-				}
-			}
-		}
 	}
 
 	get name() {
@@ -228,7 +215,7 @@ export default class Activate extends HTMLElement {
 		this.updateDetail()
 
 		this.mutationObserver.observe(this, {
-			attributeFilter: Activate.observedAttributes
+			attributeFilter: ActivateWebElement.observedAttributes
 		})
 	}
 
@@ -241,3 +228,21 @@ export default class Activate extends HTMLElement {
 	}
 }
 
+declare global {
+	interface Window {
+		ActivateWebElement: typeof ActivateWebElement
+	}
+
+	interface HTMLElementTagNameMap {
+		TAG_NAME: ActivateWebElement
+	}
+}
+
+export function registerCustomElement() {
+	if(!window.customElements.get(TAG_NAME)) {
+		window.ActivateWebElement = ActivateWebElement
+		window.customElements.define(TAG_NAME, ActivateWebElement)
+	}
+}
+
+registerCustomElement()

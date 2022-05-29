@@ -1,9 +1,8 @@
 import React  from 'react'
-import _Activate, { ActivateOptions as _Options } from './lib'
+import _Activate, { ActivateOptions as _Options, registerCustomElement } from './lib'
 
-_Activate.activate()
+registerCustomElement()
 
-// Let React know our custom element so it won't complain about it
 declare global {
 	namespace JSX {
 		interface IntrinsicElements {

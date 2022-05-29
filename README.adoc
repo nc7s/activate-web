@@ -19,15 +19,15 @@ vanilla https://activate-web-demo.netlify.app/vanilla.html.
 
 [source,html]
 ----
+<head>
+	<!-- other head tags -->
+	<script type="module" src="https://esm.run/activate-web"</script>
+</head>
 <body>
 	<!-- other important things -->
 
 	<activate-web name="The Open Web" gotoText="Donate" gotoLink="https://opencollective.com/theopenweb"></activate-web>
 	<!-- the link above is an example -->
-	<script type="module">
-		import Activate from 'https://esm.run/activate-web'
-		Activate.activate()
-	</script>
 </body>
 ----
 
@@ -41,8 +41,6 @@ $ npm install --save activate-web
 ----
 import Activate from 'activate-web/react'
 
-Activate.activate()
-
 export default App() {
 	return (
 		{...otherImportantThings}
@@ -55,29 +53,6 @@ export default App() {
 	)
 }
 ----
-
-== Interface
-
-[source,javascript]
-----
-import Activate from 'activate'
-----
-
-==== `Activate.activate(tagName: string = 'activate-web')`
-
-This static method will register itself as `tagName` in `window.customElements`
-if no other custom element was registered in that name,
-and upgrade existing elements if any present.
-
-=== React
-
-[source,javascript]
-----
-import Activate from 'activate-web/react'
-----
-
-The React version uses the default tag name `activate-web`,
-so don't `Activate.activate('another-tag')`.
 
 == Attributes
 
@@ -98,11 +73,11 @@ thus reverting to default format.
 
 == Styling
 
-Assume the custom element is registered as `tag-name`, use the following selectors:
+Use the following selectors:
 
-- `tag-name` to style the host element
-- `tag-name::part(title)` to style the title part
-- `tag-name::part(detail)` to style the detail part
+- `activate-web` to style the host element
+- `activate-web::part(title)` to style the title part
+- `activate-web::part(detail)` to style the detail part
 
 Be sure to override the `opacity` and `filter` properties if you want the text to have visible color.
 
@@ -111,3 +86,4 @@ The default style is written in plain CSS, at `import { DEFAULT_STYLES } from 'a
 == License
 
 BSD 3-clause &copy; 2022 Blair Noctis.
+

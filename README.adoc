@@ -5,84 +5,108 @@ image:https://img.shields.io/npm/v/activate-web?style=flat-square[npm]
 The "Activate Windows" watermark ported to *Open Web ™*.
 Inspired by https://github.com/MrGlockenspiel/activate-linux[activate-linux].
 
-It comes with a vanilla JS/TS and a React version. `tsconfig.json` target & module set to ES2020.
+As of 0.1, it's a Web Component written in TypeScript, with a simply packed React component.
+The old class based version stayed at 0.0.x.
 
-WARNING: This is a parody and not meant to be used anywhere close to production.
+It's intended as a parody, although still customizeable in both style and content.
 
-Demo at https://activate-web-demo.netlify.app.
+React demo at https://activate-web-demo.netlify.app,
+vanilla https://activate-web-demo.netlify.app/vanilla.html.
 
 == Usage
 
-.`import Activate, { ActivateOptions } from 'activate-web'`
-- `new Activate(options?: ActivateOptions)` See below for available options
-- `activate.activate()` Activate and attach the watermark
-- `activate.deactivate()` Deactivate and detach the watermark
-
-=== Vanilla JS with ES module
+=== Vanilla
 
 [source,html]
 ----
 <body>
-	<!-- other important things ->
+	<!-- other important things -->
+
+	<activate-web name="The Open Web" gotoText="Donate" gotoLink="https://opencollective.com/theopenweb"></activate-web>
+	<!-- the link above is an example -->
 	<script type="module">
 		import Activate from 'https://esm.run/activate-web'
-		activate = new Activate({
-			name: 'The Open Web',
-			gotoName: 'Donate',
-			gotoLink: 'https://opencollective.com/theopenweb' // This is an example
-		})
-		activate.activate()
+		Activate.activate()
 	</script>
 </body>
-----
-
-=== Vanilla JS/TS
-
-----
-$ npm install --save activate-web
-----
-
-[source,js]
-----
-import Activate from 'activate-web'
-
-const activate = new Activate({
-	name: 'The Open Web',
-	gotoName: 'Donate',
-	gotoLink: 'https://opencollective.com/theopenweb' // This is an example
-})
-
-activate.activate()
 ----
 
 === React
 
 ----
-$ npm install activate-web
+$ npm install --save activate-web
 ----
 
 [source,jsx]
 ----
 import Activate from 'activate-web/react'
 
+Activate.activate()
+
 export default App() {
 	return (
-		// other important things
-		<Activate name='The Open Web' gotoName='Donate' gotoLink: 'https://opencollective.com/theopenweb' />
+		{...otherImportantThings}
+
+		<Activate
+		name='The Open Web'
+		gotoText='Donate'
+		gotoLink='https://opencollective.com/theopenweb'
+		/>
 	)
 }
 ----
 
-== Configuration
+== Interface
 
-.`import { ActivateOptions } from 'activate-web'`
-- `name: string` Name in title: `Activate ${name}`
-- `gotoName: string` Name of go-to in detail: `Go to ${gotoName} to activate...`
-- `gotoLink?: string` Link for `gotoName`
-- `detailHtml?: string | ReactElement` Custom HTML or element to put in detail;
-only `ReactElement` is allowed in React, otherwise it's escaped
-- `textColor?: string` Custom text color; default style is `
-- `noDefaultStyle?: boolean` Don't use default style
+[source,javascript]
+----
+import Activate from 'activate'
+----
+
+==== `Activate.activate(tagName: string = 'activate-web')`
+
+This static method will register itself as `tagName` in `window.customElements`
+if no other custom element was registered in that name,
+and upgrade existing elements if any present.
+
+=== React
+
+[source,javascript]
+----
+import Activate from 'activate-web/react'
+----
+
+The React version uses the default tag name `activate-web`,
+so don't `Activate.activate('another-tag')`.
+
+== Attributes
+
+These attributes are shared between vanilla and React versions.
+
+- `name?: string` as in title line: `Activate ${name}`
+- `gotoText?: string, gotoLink?: string` as in detail line:
+`Go to <a href="${gotoLink}">${gotoText}</a> to activate ${name}`
+- `titleHtml?: string, detailHtml?: string` custom HTML of respective parts, usually set together;
+updated using `innerHTML`, so *only trusted input can be passed in*,
+and no React component or other fancy stuff (do tell me how though)
+
+The `Html` attributes can be used for more personalized text, or i18n, for example.
+
+All attributes filter out "falsy" strings: `'false'`, `'null'`, `'undefined'`,
+except `Html` ones, which silently sets themselves to empty string (`''`),
+thus reverting to default format.
+
+== Styling
+
+Assume the custom element is registered as `tag-name`, use the following selectors:
+
+- `tag-name` to style the host element
+- `tag-name::part(title)` to style the title part
+- `tag-name::part(detail)` to style the detail part
+
+Be sure to override the `opacity` and `filter` properties if you want the text to have visible color.
+
+The default style is written in plain CSS, at `import { DEFAULT_STYLES } from 'activate-web/lib.ts'`.
 
 == License
 

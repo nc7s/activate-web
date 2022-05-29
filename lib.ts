@@ -1,5 +1,9 @@
 export const DEFAULT_STYLES = `
-	.--activate-web {
+	* {
+		user-select: none;
+	}
+
+	:host {
 		position: fixed;
 		z-index: 999;
 		right: 5vw;
@@ -11,115 +15,229 @@ export const DEFAULT_STYLES = `
 		font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
 		text-align: start;
 	}
-	.--activate-web--title {
+
+	::part(title) {
 		font-size: 1.5em;
 	}
-	.--activate-web--detail {
+
+	::part(detail) {
 		font-size: .9em;
 		max-width: 40ch;
 	}
-	.--activate-web--detail a {
+
+	a {
 		color: inherit;
 		text-decoration: underline;
-		font-size: 1em;
+	}
+
+	a:hover {
+		text-decoration: underline dashed;
+	}
+
+	a:visited {
+		color: inherit;
 	}
 `
 
-export const STYLE_CLASS = '--activate-web'
-export const STYLE_CLASS_TITLE = STYLE_CLASS + '--title'
-export const STYLE_CLASS_DETAIL = STYLE_CLASS + '--detail'
+const ATTR_LC_MAP = {
+	'gototext': 'gotoText',
+	'gotolink': 'gotoLink',
+	'titlehtml': 'titleHtml',
+	'detailhtml': 'detailHtml',
+}
+
+export const OPTION_KEYS = ['name', 'gotoText', 'gotoLink', 'titleHtml', 'detailHtml']
+
+const FALSY_STRINGS = ['false', 'null', 'undefined']
 
 export interface ActivateOptions {
-	name?: string,
-	gotoName?: string,
-	gotoLink?: string,
-	detailHtml?: string,
-	textColor?: string,
-	noDefaultStyle?: boolean,
+	name: string,
+	gotoText: string,
+	gotoLink: string,
+	titleHtml: string,
+	detailHtml: string,
 }
 
 export const DEFAULT_OPTIONS: ActivateOptions = {
 	name: 'Open Web',
-	gotoName: 'your editor',
+	gotoText: 'your favorite editor',
+	gotoLink: '',
+	titleHtml: '',
+	detailHtml: '',
 }
 
-export function _makeGoto(options: ActivateOptions) {
-	return options.gotoLink === undefined ? options.gotoName :
-		`<a href="${options.gotoLink}">${options.gotoName}</a>`
-}
+export default class Activate extends HTMLElement {
+	#options: ActivateOptions = Object.create(DEFAULT_OPTIONS)
 
-export default class Activate {
-	options: ActivateOptions
-	activated: boolean = false
+	titleEl: HTMLElement
+	detailEl: HTMLElement
 
-	// Following fields are initialized using methods, which TypeScript seems unable to detect yet.
-	//
-	// @ts-ignore
-	el: HTMLElement
-	// @ts-ignore
-	titleEl: HTMLDivElement
-	// @ts-ignore
-	detailEl: HTMLDivElement
+	mutationObserver: MutationObserver
 
-	constructor(options?: ActivateOptions) {
-		this.options = Object.assign({}, DEFAULT_OPTIONS, options)
-		this.createElement()
-		if(this.options.textColor !== undefined) {
-			// @ts-ignore
-			this.el.style.color = options.textColor
-		}
-	}
-
-	createElement() {
-		this.el = document.createElement('div')
-		this.el.classList.add(STYLE_CLASS)
+	constructor() {
+		super()
 
 		this.titleEl = document.createElement('div')
-		this.titleEl.classList.add(STYLE_CLASS_TITLE)
-		this.titleEl.innerHTML = `Activate ${this.options.name}`
+		this.titleEl.setAttribute('part', 'title')
 
 		this.detailEl = document.createElement('div')
-		this.detailEl.classList.add(STYLE_CLASS_DETAIL)
-		this.detailEl.innerHTML = this.options.detailHtml ||
-			`Go to ${_makeGoto(this.options)} to activate ${this.options.name}.`
+		this.detailEl.setAttribute('part', 'detail')
 
-		this.el.appendChild(this.titleEl)
-		this.el.appendChild(this.detailEl)
+		const defaultStyleEl = document.createElement('style')
+		defaultStyleEl.textContent = DEFAULT_STYLES
 
-		const containerEl = document.createElement('div')
-		if(!this.options.noDefaultStyle) {
-			const styleEl = document.createElement('style')
-			styleEl.textContent = DEFAULT_STYLES
-			containerEl.appendChild(styleEl)
+		this.attachShadow({
+			mode: 'open',
+		})
+		this.shadowRoot?.append(defaultStyleEl, this.titleEl, this.detailEl)
+
+		this.mutationObserver = new MutationObserver(() => {
+			this.updateTitle()
+			this.updateDetail()
+		})
+	}
+
+	static activate(tagName: string = 'activate-web') {
+		if(window.customElements.get(tagName)) {
+			return
 		}
-		containerEl.appendChild(this.el)
-		this.el = containerEl
-	}
-
-	attachElement(parent?: HTMLElement) {
-		(parent || document.body).appendChild(this.el)
-	}
-
-	detachElement() {
-		this.el.remove()
-	}
-
-	activate() {
-		if(this.activated) {
-			this.deactivate()
+		window.customElements.define(tagName, Activate)
+		const activateEls = document.querySelectorAll(tagName)
+		if(activateEls.length !== 0) {
+			for(let el of activateEls) {
+				if(!(el instanceof Activate)) {
+					window.customElements.upgrade(el)
+				}
+			}
 		}
-		this.createElement()
-		this.attachElement()
-		this.activated = true
 	}
 
-	deactivate() {
-		this.detachElement()
-		this.activated = false
+	get name() {
+		return this.#options.name
 	}
 
-	get isActivated() {
-		return this.activated
+	get gotoText() {
+		return this.#options.gotoText
+	}
+
+	get gotoLink() {
+		return this.#options.gotoLink
+	}
+
+	get titleHtml() {
+		return this.#options.titleHtml
+	}
+
+	get detailHtml() {
+		return this.#options.detailHtml
+	}
+
+	set name(value: string) {
+		this.#options.name = value
+		this.updateTitle()
+		this.updateDetail()
+	}
+
+	set gotoText(value: string) {
+		this.#options.gotoText = value
+		this.updateDetail()
+	}
+
+	set gotoLink(value: string) {
+		this.#options.gotoLink = value
+		this.updateDetail()
+	}
+
+	set titleHtml(value: string) {
+		this.#options.titleHtml = value
+		this.updateTitle()
+	}
+
+	set detailHtml(value: string) {
+		this.#options.detailHtml = value
+		this.updateDetail()
+	}
+
+	updateAttribute(attr: string, value: string) {
+		if(attr in ATTR_LC_MAP) {
+			// @ts-ignore
+			attr = ATTR_LC_MAP[attr]
+		}
+		if(!OPTION_KEYS.includes(attr)) {
+			return
+		}
+		switch(attr) {
+		case 'titleHtml':
+		case 'detailHtml':
+			if(FALSY_STRINGS.includes(value)) {
+				value = ''
+			}
+		}
+		if(FALSY_STRINGS.includes(value)) {
+			return
+		}
+		// @ts-ignore
+		this.#options[attr] = value
+
+		switch(attr) {
+		case 'name':
+		case 'titleHtml':
+		case 'detailHtml':
+			this.updateTitle()
+		case 'gotoText':
+		case 'gotoLink':
+			this.updateDetail()
+		}
+	}
+
+	updateTitle() {
+		this.titleEl.innerHTML = this.titleHtml || this._titleHtml()
+	}
+
+	updateDetail() {
+		this.detailEl.innerHTML = this.detailHtml || this._detailHtml()
+	}
+
+	_titleHtml() {
+		return `Activate ${this.#options.name}`
+	}
+
+	_detailHtml() {
+		return `Go to ${this._makeGoto()} to activate ${this.#options.name}.`
+	}
+
+	_makeGoto() {
+		const text = this.#options.gotoText
+		const link = this.#options.gotoLink
+		return link ? `<a href="${link}">${text}</a>` : text
+	}
+
+	static get observedAttributes() {
+		return Object.keys(ATTR_LC_MAP)
+	}
+
+	connectedCallback() {
+		let attr: keyof ActivateOptions
+		for (attr in this.#options) {
+			const value = this.getAttribute(attr)
+			if(value && value !== this.#options[attr] && value !== 'false') {
+				this.#options[attr] = value
+			}
+		}
+		this.updateTitle()
+		this.updateDetail()
+
+		this.mutationObserver.observe(this, {
+			attributeFilter: Activate.observedAttributes
+		})
+	}
+
+	disconnectedCallback() {
+		this.mutationObserver.disconnect()
+	}
+
+	attributeChangedCallback(attr: string, _: string, curr: string) {
+		this.updateAttribute(attr, curr)
 	}
 }
 

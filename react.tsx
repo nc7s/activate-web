@@ -1,27 +1,20 @@
-import {
-	ActivateOptions as _ActivateOptions, _makeGoto, DEFAULT_OPTIONS,
-	DEFAULT_STYLES, STYLE_CLASS, STYLE_CLASS_TITLE, STYLE_CLASS_DETAIL,
-} from './lib'
+import React  from 'react'
+import _Activate, { ActivateOptions as _Options } from './lib'
 
-export interface ActivateOptions extends Omit<_ActivateOptions, 'titleHtml' | 'detailHtml'> {
-	detailHtml?: any,
+_Activate.activate()
+
+// Let React know our custom element so it won't complain about it
+declare global {
+	namespace JSX {
+		interface IntrinsicElements {
+			'activate-web': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>
+		}
+	}
 }
 
-export default function Activate(options: ActivateOptions) {
-	options = Object.assign({}, DEFAULT_OPTIONS, options)
-	return (
-	<div>
-		{ !options.noDefaultStyle && <style> { DEFAULT_STYLES } </style> }
-		<div className={STYLE_CLASS} style={{ color: options.textColor || 'inherit' }}>
-			<div className={STYLE_CLASS_TITLE}>Activate {options.name}</div>
-			{ options.detailHtml ?
-				<div className={STYLE_CLASS_DETAIL}>{options.detailHtml}</div> :
-				<div className={STYLE_CLASS_DETAIL}>
-					Go to {options.gotoLink ? <a href={options.gotoLink}>{options.gotoName}</a> : options.gotoName} to activate {options.name}.
-				</div>
-			}
-		</div>
-	</div>
-	)
+export type ActivateOptions = Partial<_Options>
+
+export default function Activate(props?: ActivateOptions & any) {
+	return <activate-web {...props}></activate-web>
 }
 

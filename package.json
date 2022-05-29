@@ -1,18 +1,21 @@
 {
 	"name": "activate-web",
-	"description": "Like activate-linux, but for websites",
-	"version": "0.0.2",
+	"description": "Windows-like watermark, but for websites",
+	"version": "0.1.0",
 	"repository": "https://github.com/bnoctis/activate-web",
 	"author": "Blair Noctis <code@noctis.im>",
 	"main": "lib.js",
 	"scripts": {
 		"build": "tsc",
-		"demo-build": "webpack -c demo.webpack.config.js && cp ./demo/index.html ./demo/style.css ./lib.js _demo/",
+		"clean": "rm -r lib.js react.js _demo/",
+		"check-publish": "pnpm publish --dry-run",
+		"demo-build": "webpack -c demo.webpack.config.js && cp ./demo/vanilla.html ./demo/style.css ./lib.js _demo/",
 		"demo-start": "webpack serve -c demo.webpack.config.js"
 	},
 	"devDependencies": {
 		"@types/react": "^18.0.9",
 		"@types/react-dom": "^18.0.5",
+		"copy-webpack-plugin": "^11.0.0",
 		"css-loader": "^6.7.1",
 		"html-webpack-plugin": "^5.5.0",
 		"mini-css-extract-plugin": "^2.6.0",

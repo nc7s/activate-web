@@ -1,3 +1,5 @@
 node_modules/
 _demo/
 *.log
+lib.js
+react.js

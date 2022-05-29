@@ -10,11 +10,15 @@
 		"clean": "rm -r lib.js react.js _demo/ || true",
 		"check-publish": "pnpm clean && pnpm build && pnpm publish --dry-run --no-git-checks",
 		"demo-build": "webpack -c demo.webpack.config.js && cp ./demo/vanilla.html ./demo/style.css ./lib.js _demo/",
-		"demo-start": "webpack serve -c demo.webpack.config.js"
+		"demo-webpack": "webpack serve -c demo.webpack.config.js",
+		"demo-tsc": "tsc --watch --preserveWatchOutput",
+		"demo-start": "concurrently pnpm:demo-webpack pnpm:demo-tsc",
+		"pnpm": "npm"
 	},
 	"devDependencies": {
 		"@types/react": "^18.0.9",
 		"@types/react-dom": "^18.0.5",
+		"concurrently": "^7.2.1",
 		"copy-webpack-plugin": "^11.0.0",
 		"css-loader": "^6.7.1",
 		"html-webpack-plugin": "^5.5.0",

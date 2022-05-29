@@ -5,8 +5,7 @@
 	<meta name="viewport" content="width=device-width" />
 	<title>Activate-Web Vanilla Demo</title>
 	<link href="style.css" rel="stylesheet" />
-	<style>
-	</style>
+	<script type="module" src="./lib.js"></script>
 </head>
 <body>
 	<div id="app-root">
@@ -18,12 +17,8 @@
 		<p>It's at the bottom right ↘︎</p>
 		<button class='show-button'>See the time... in real time</button>
 	</div>
-	<activate-web name="Activate-Web" gotoText="GitHub repo" gotoLink="https://github.com/bnoctis/activate-web" gotoAction="give a star">
+	<activate-web name="Activate-Web" gotoText="GitHub repo" gotoLink="https://github.com/bnoctis/activate-web">
 	</activate-web>
-	<script type="module">
-		import Activate from './lib.js'
-		Activate.activate()
-	</script>
 	<script>
 		const activateEl = document.querySelector('activate-web')
 		const showButtonEl = document.querySelector('.show-button')

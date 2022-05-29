@@ -2,12 +2,13 @@
 
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtracePlugin = require('mini-css-extract-plugin')
+const CopyPlugin = require('copy-webpack-plugin')
 
 module.exports = {
 	mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
-	entry: './demo/react/index.tsx',
+	entry: './demo/index.tsx',
 	output: {
-		path: `${__dirname}/_demo/react/`,
+		path: `${__dirname}/_demo/`,
 	},
 	module: {
 		rules: [
@@ -27,8 +28,20 @@ module.exports = {
 	},
 	plugins: [
 		new HtmlWebpackPlugin({
-			template: './demo/react/index.html',
+			template: './demo/index.html',
 		}),
 		new MiniCssExtracePlugin(),
+		new CopyPlugin({
+			patterns: [
+				'./demo/vanilla.html',
+				'./demo/style.css',
+				'./lib.js',
+			],
+		}),
 	],
+	devServer: {
+		static: {
+			directory: `${__dirname}/demo/public/`,
+		},
+	},
 }

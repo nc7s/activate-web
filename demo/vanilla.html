@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width" />
+	<title>Activate-Web Vanilla Demo</title>
+	<link href="style.css" rel="stylesheet" />
+	<style>
+	</style>
+</head>
+<body>
+	<div id="app-root">
+		<p><a href="https://github.com/bnoctis/activate-web">Activate-Web</a> vanilla demo</p>
+		<p>Go to <a href="/">React demo</a></p>
+		<p>Source code of this demo page can be found at <code>demo/vanilla.html</code></p>
+		<p>Background photo: <a href="https://unsplash.com/photos/cqbLg3lZEpk">https://unsplash.com/photos/cqbLg3lZEpk</a></p>
+		<button onclick="document.body.classList.toggle('dark')">toggle dark</button>
+		<p>It's at the bottom right ↘︎</p>
+		<button class='show-button'>See the time... in real time</button>
+	</div>
+	<activate-web name="Activate-Web" gotoText="GitHub repo" gotoLink="https://github.com/bnoctis/activate-web" gotoAction="give a star">
+	</activate-web>
+	<script type="module">
+		import Activate from './lib.js'
+		Activate.activate()
+	</script>
+	<script>
+		const activateEl = document.querySelector('activate-web')
+		const showButtonEl = document.querySelector('.show-button')
+		let intervalId = undefined
+
+		function toggleShow() {
+			if(intervalId) {
+				clearInterval(intervalId)
+				intervalId = undefined
+				activateEl.removeAttribute('titleHtml')
+				activateEl.removeAttribute('detailHtml')
+				activateEl.classList.remove('onShow')
+			} else {
+				update()
+				activateEl.classList.add('onShow')
+				intervalId = setInterval(update, 1000)
+			}
+			showButtonEl.textContent = intervalId ? `I've seen enough` : 'See the time... in real time'
+		}
+
+		function update() {
+			const now = new Date
+			activateEl.setAttribute('titleHtml', `The year is ${now.getFullYear()}.`)
+			activateEl.setAttribute('detailHtml', `And the time is ${now.toLocaleTimeString()}`)
+		}
+
+		showButtonEl.addEventListener('click', toggleShow)
+	</script>
+</body>
+</html>

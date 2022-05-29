@@ -12,8 +12,13 @@ p {
 	margin-top: 0;
 }
 
-a {
+a, a:visited {
 	color: inherit;
+}
+
+button {
+	padding: 0 2em;
+	height: 3em;
 }
 
 #app-root {
@@ -29,4 +34,15 @@ body.dark #app-root {
 
 body.dark p {
 	color: white;
+}
+
+activate-web.onShow {
+	filter: initial;
+	opacity: initial;
+	color: darkcyan;
+	font-family: monospace;
+}
+
+.show-button {
+	width: 17em;
 }

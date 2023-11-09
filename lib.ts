@@ -234,7 +234,7 @@ declare global {
 	}
 
 	interface HTMLElementTagNameMap {
-		TAG_NAME: ActivateWebElement
+		[TAG_NAME]: ActivateWebElement
 	}
 }
 
@@ -246,3 +246,4 @@ export function registerCustomElement() {
 }
 
 registerCustomElement()
+
